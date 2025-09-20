@@ -47,6 +47,8 @@ const addPost = () => {
     });
 };
 
+const handleDeletedPost = (postId: number) => (posts.value = posts.value.filter(({ id }) => id !== postId));
+
 watch(
     () => props.posts,
     (newPosts) => {
@@ -62,7 +64,7 @@ watch(
     <AuthenticatedLayout>
         <div class="pt-12 pb-24 flex flex-col items-center gap-6">
             <template v-if="posts.length > 0">
-                <Post v-for="post in posts" :key="post.id" :post="post" />
+                <Post v-for="post in posts" :key="post.id" :post="post" @deleted="handleDeletedPost" />
             </template>
             <div v-else class="text-gray-500 text-center">
                 Nenhum post disponível.

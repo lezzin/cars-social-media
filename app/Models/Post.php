@@ -10,11 +10,17 @@ class Post extends Model
 
     protected $fillable = [
         'description',
+        'user_id',
         'image',
     ];
 
     public function getImageUrlAttribute()
     {
         return $this->image ? asset('storage/' . $this->image) : null;
+    }
+
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
     }
 }
