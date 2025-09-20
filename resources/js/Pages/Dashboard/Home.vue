@@ -1,0 +1,109 @@
+<script setup lang="ts">
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { ref, watch } from 'vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import Modal from '@/Components/Modal.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import TextInput from '@/Components/TextInput.vue';
+import InputError from '@/Components/InputError.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import { DashboardPageProps, Post as PostType } from '@/types';
+import Post from './Partials/Post.vue';
+import FileInput from '@/Components/FileInput.vue';
+
+const { props } = usePage<DashboardPageProps>();
+const posts = ref<PostType[]>(props.posts);
+
+const addingNewPost = ref(false);
+const descriptionInput = ref<HTMLInputElement | null>(null);
+
+const closeModal = () => {
+    form.reset();
+    addingNewPost.value = false
+};
+
+const addNewPost = () => (addingNewPost.value = true);
+
+const form = useForm<{ description: string; image: File | null }>({
+    description: '',
+    image: null,
+});
+
+const addPost = () => {
+    form.post(route('post.create'), {
+        preserveScroll: true,
+        onSuccess: () => {
+            closeModal();
+            form.reset();
+            previewImage.value = null;
+        },
+        onError: () => descriptionInput.value?.focus(),
+    });
+};
+
+// preview
+const previewImage = ref<string | null>(null);
+watch(
+    () => form.image,
+    (file) => {
+        previewImage.value = file ? URL.createObjectURL(file) : null;
+    }
+);
+</script>
+
+<template>
+
+    <Head title="Dashboard" />
+
+    <AuthenticatedLayout>
+        <div class="pt-12 pb-24 flex flex-col items-center gap-6">
+            <template v-if="posts.length > 0">
+                <Post v-for="post in posts" :key="post.id" :post="post" />
+            </template>
+            <div v-else class="text-gray-500 text-center">
+                Nenhum post disponível.
+            </div>
+        </div>
+
+        <div class="fixed bottom-10 right-10">
+            <PrimaryButton @click="addNewPost">New Post</PrimaryButton>
+        </div>
+
+        <Modal :show="addingNewPost" @close="closeModal">
+            <div class="p-6">
+                <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                    Add new post to the dashboard
+                </h2>
+
+                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                    Share an insane car that you have seen in your day-to-day!
+                </p>
+
+                <div class="grid gap-2 mt-6">
+                    <div class="grid">
+                        <InputLabel for="description" value="Description" class="sr-only" />
+                        <TextInput id="description" ref="descriptionInput" v-model="form.description" type="text"
+                            placeholder="Place any description..." />
+                        <InputError :message="form.errors.description" class="mt-2" />
+                    </div>
+
+                    <div class="grid">
+                        <InputLabel for="image" value="Image" class="sr-only" />
+                        <FileInput v-model="form.image" />
+                        <InputError :message="form.errors.image" class="mt-2" />
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-end">
+                    <SecondaryButton @click="closeModal">Cancel</SecondaryButton>
+
+                    <PrimaryButton class="ms-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing"
+                        @click="addPost">
+                        Add new post
+                    </PrimaryButton>
+                </div>
+            </div>
+        </Modal>
+    </AuthenticatedLayout>
+</template>
