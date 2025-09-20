@@ -33,21 +33,24 @@ const form = useForm<{ description: string; image: File | null }>({
 const addPost = () => {
     form.post(route('post.create'), {
         preserveScroll: true,
-        onSuccess: () => {
+        onSuccess: (page) => {
+            const newPosts = page.props.posts as PostType[] | undefined;
+
+            if (newPosts?.length) {
+                posts.value.unshift(newPosts[0]);
+            }
+
             closeModal();
             form.reset();
-            previewImage.value = null;
         },
         onError: () => descriptionInput.value?.focus(),
     });
 };
 
-// preview
-const previewImage = ref<string | null>(null);
 watch(
-    () => form.image,
-    (file) => {
-        previewImage.value = file ? URL.createObjectURL(file) : null;
+    () => props.posts,
+    (newPosts) => {
+        posts.value = newPosts;
     }
 );
 </script>
