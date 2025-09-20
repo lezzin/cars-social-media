@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
-import { ref, watch } from 'vue';
+import { provide, ref, watch } from 'vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import Modal from '@/Components/Modal.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -47,7 +47,31 @@ const addPost = () => {
     });
 };
 
-const handleDeletedPost = (postId: number) => (posts.value = posts.value.filter(({ id }) => id !== postId));
+const handleCommentedPost = (postId: number) => {
+    const post = posts.value.find(p => p.id === postId);
+
+    if (post) {
+        post.comments_count++;
+    }
+};
+
+function handleDeletedPost(postId: number) {
+    posts.value = posts.value.filter(p => p.id !== postId);
+}
+
+function handleReactedPost(data: { likes_count: number; liked_by_user: boolean }, postId: number) {
+    const post = posts.value.find(p => p.id === postId);
+
+    if (post) {
+        post.likes_count = data.likes_count;
+        post.liked_by_user = data.liked_by_user;
+    }
+}
+
+provide('postActions', {
+    handleDeletedPost,
+    handleReactedPost,
+});
 
 watch(
     () => props.posts,
@@ -64,7 +88,8 @@ watch(
     <AuthenticatedLayout>
         <div class="pt-12 pb-24 flex flex-col items-center gap-6">
             <template v-if="posts.length > 0">
-                <Post v-for="post in posts" :key="post.id" :post="post" @deleted="handleDeletedPost" />
+                <Post v-for="post in posts" :key="post.id" :post="post" @deleted="handleDeletedPost"
+                    @liked=handleReactedPost @commented="handleCommentedPost" />
             </template>
             <div v-else class="text-gray-500 text-center">
                 Nenhum post disponível.

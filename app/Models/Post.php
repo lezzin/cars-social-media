@@ -14,13 +14,23 @@ class Post extends Model
         'image',
     ];
 
-    public function getImageUrlAttribute()
+    public function getImageAttribute($value)
     {
-        return $this->image ? asset('storage/' . $this->image) : null;
+        return $value ? asset('storage/' . $value) : null;
     }
 
     public function user()
     {
-        return $this->hasOne(User::class, 'id', 'user_id');
+        return $this->belongsTo(User::class);
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
     }
 }

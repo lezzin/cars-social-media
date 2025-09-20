@@ -48,8 +48,8 @@ class User extends Authenticatable
         ];
     }
 
-    public function getImageUrlAttribute()
+    public function getImageAttribute($value)
     {
-        return $this->image ? asset('storage/' . $this->image) : null;
+        return $value ? asset('storage/' . $value) : null;
     }
 }

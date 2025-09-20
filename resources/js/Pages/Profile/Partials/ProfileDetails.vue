@@ -7,7 +7,7 @@ const user = usePage().props.auth.user;
 <template>
     <section>
         <div class="flex items-center space-x-3">
-            <img :src="user.image_url" alt="" class="w-20 h-20 rounded-full object-cover border border-gray-600" />
+            <img :src="user.image" alt="" class="w-20 h-20 rounded-full object-cover border border-gray-600" />
 
             <div class="min-w-0 flex-1">
                 <p class="font-bold text-white truncate text-lg">
