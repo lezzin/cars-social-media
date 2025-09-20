@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PostCreateRequest;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
@@ -20,7 +21,7 @@ class PostController extends Controller
 
         Post::create($data);
 
-        return redirect()->back();
+        return Redirect::route('dashboard');
     }
 
     public function destroy(Post $post)

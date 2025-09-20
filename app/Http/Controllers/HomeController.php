@@ -21,7 +21,7 @@ class HomeController extends Controller
                     'id' => $post->user->id,
                     'name' => $post->user->name,
                     'email' => $post->user->email,
-                    'image' => $post->user->image_url,
+                    'image_url' => $post->user->image_url,
                     'username' =>  $post->user->username
                 ],
             ]);

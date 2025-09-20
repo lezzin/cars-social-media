@@ -27,7 +27,7 @@ function react(type: string) {
         <div class="flex items-start justify-between mb-3">
             <div class="flex items-center space-x-3">
                 <a href="" target="_blank" rel="noopener noreferrer" class="flex-shrink-0">
-                    <img :src="props.post.user.image" alt=""
+                    <img :src="props.post.user.image_url" alt=""
                         class="w-12 h-12 rounded-full object-cover border border-gray-600" />
                 </a>
 
