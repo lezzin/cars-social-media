@@ -52,4 +52,9 @@ class User extends Authenticatable
     {
         return $value ? asset('storage/' . $value) : null;
     }
+
+    public function getImagePathAttribute()
+    {
+        return $this->attributes['image'];
+    }
 }

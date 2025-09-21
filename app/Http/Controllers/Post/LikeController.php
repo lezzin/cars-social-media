@@ -10,17 +10,16 @@ class LikeController extends Controller
 {
     public function toggle(Request $request, Post $post)
     {
-        $user = $request->user();
-        $like = $post->likes()->where('user_id', $user->id)->first();
+        $userId = $request->user()->id;
 
-        if ($like) {
-            $like->delete();
+        $alreadyLiked = $post->likes()->where('user_id', $userId)->exists();
+
+        if ($alreadyLiked) {
+            $post->likes()->where('user_id', $userId)->delete();
             $post->decrement('likes_count');
-            $likedByUser = false;
         } else {
-            $post->likes()->create(['user_id' => $user->id]);
+            $post->likes()->create(['user_id' => $userId]);
             $post->increment('likes_count');
-            $likedByUser = true;
         }
 
         $post->refresh();
@@ -28,7 +27,7 @@ class LikeController extends Controller
         return response()->json([
             'post_id'       => $post->id,
             'likes_count'   => $post->likes_count,
-            'liked_by_user' => $likedByUser,
+            'liked_by_user' => ! $alreadyLiked,
         ]);
     }
 }

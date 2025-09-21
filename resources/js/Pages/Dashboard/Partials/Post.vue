@@ -37,6 +37,7 @@ function react(type: PostReaction, parentId: number | null = null, content?: str
         preserveScroll: true,
         onSuccess: () => {
             emit('commented', props.post.id);
+            newComment.value = '';
             fetchComments();
         },
         onFinish: () => isLoading.value = false

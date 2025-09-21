@@ -19,6 +19,11 @@ class Post extends Model
         return $value ? asset('storage/' . $value) : null;
     }
 
+    public function getImagePathAttribute()
+    {
+        return $this->attributes['image'];
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

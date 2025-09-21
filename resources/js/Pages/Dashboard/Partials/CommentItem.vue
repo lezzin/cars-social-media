@@ -36,7 +36,7 @@ const submitReply = () => {
                 </div>
 
                 <p class="text-xs text-gray-500 mt-2 px-2">
-                    {{ new Date(comment.created_at).toLocaleString('pt-BR') }}
+                    {{ comment.created_at }}
                 </p>
             </div>
         </div>
@@ -68,7 +68,7 @@ const submitReply = () => {
                     </div>
 
                     <p class="text-xs text-gray-500 mt-2 px-2">
-                        {{ new Date(reply.created_at).toLocaleString('pt-BR') }}
+                        {{ reply.created_at }}
                     </p>
                 </div>
             </div>

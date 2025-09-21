@@ -3,27 +3,27 @@
 namespace App\Http\Controllers\Post;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CommentCreateRequest;
+use App\Http\Resources\CommentResource;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class CommentController extends Controller
 {
-    public function store(Request $request, Post $post)
+    public function store(CommentCreateRequest $request, Post $post)
     {
-        $data = $request->validate([
-            'content' => 'required|string|max:1000',
-            'parent_id' => 'nullable|exists:comments,id'
-        ]);
+        $data = $request->validated();
 
         $post->comments()->create([
-            'user_id' => $request->user()->id,
-            'content' => $data['content'],
+            'user_id'   => $request->user()->id,
+            'content'   => $data['content'],
             'parent_id' => $data['parent_id'] ?? null,
         ]);
 
         $post->increment('comments_count');
 
-        return back()->with('success', 'Comentário adicionado!');
+        return Redirect::back()->with('success', 'Comentário adicionado!');
     }
 
     public function get(Request $request, Post $post)
@@ -31,11 +31,11 @@ class CommentController extends Controller
         $comments = $post->comments()
             ->with(['user', 'replies.user'])
             ->whereNull('parent_id')
-            ->orderBy('created_at', 'desc')
+            ->latest()
             ->get();
 
         return response()->json([
-            'comments' => $comments,
+            'comments' => CommentResource::collection($comments)->resolve(),
         ]);
     }
 }

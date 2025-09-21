@@ -38,9 +38,10 @@ class RegisteredUserController extends Controller
             'image' => ['nullable', 'file', 'image', 'max:2048'],
         ]);
 
-        if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('profiles', 'public');
-        }
+        $validated['image'] = $this->handleFileUpload(
+            $request->file('image'),
+            'profiles'
+        );
 
         $user = User::create([
             'name' => $validated['name'],
